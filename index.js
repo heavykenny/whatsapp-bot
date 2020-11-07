@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
 require('dotenv').config();
+const bodyParser = require('body-parser');
 
-app.use(bodyParser);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 let accountSid = process.env.accountSid;
 let authToken = process.env.authToken;
@@ -21,11 +22,9 @@ app.get('/', function (req, res) {
   res.send('Hello World');
 });
 
-app.post('/callback', function (req, res) {
-  if(req.body == "Hi"){
-    res.json({requestBody: "Gotha!"});
-  }
-  res.json({requestBody: req.body});
+app.post('/callback', (req, res) => {
+  const { body } = req;
+  res.send({request: body});
 });
 
 app.listen(process.env.PORT)
