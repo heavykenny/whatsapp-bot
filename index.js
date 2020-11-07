@@ -22,6 +22,7 @@ app.post('/callback', function (req, res) {
   console.log("Call Back")
   console.log(req,res);
   console.log("Call Back")
+  res.send('Call Back Recieved')
 });
 
 app.listen(process.env.PORT)
