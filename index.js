@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 require('dotenv').config();
+
+app.use(bodyParser);
 
 let accountSid = process.env.accountSid;
 let authToken = process.env.authToken;
@@ -10,19 +13,19 @@ let client = new twilio(accountSid, authToken);
 
 app.get('/', function (req, res) {
   client.messages.create({
-    body: 'Hello from Node',
+    body: 'Hello from',
     to: 'whatsapp:+2348088434514',
     from: "whatsapp:"+ process.env.TWILIO_NUMBER
 })
 .then((message) => console.log(message.sid));
-  res.send('Hello World')
+  res.send('Hello World');
 });
 
 app.post('/callback', function (req, res) {
-  console.log("Call Back")
-  console.log(req,res);
-  console.log("Call Back")
-  res.send('Call Back Recieved')
+  if(req.body == "Hi"){
+    res.json({requestBody: "Gotha!"});
+  }
+  res.json({requestBody: req.body});
 });
 
 app.listen(process.env.PORT)
