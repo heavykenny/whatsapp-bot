@@ -29,6 +29,7 @@ app.get('/', function (req, res) {
 app.post('/callback', (req, res) => {
   const {body} = req;
   const {request} = body;
+  console.log(request);
   const param = request.Body;
   let incomingUser;
 
