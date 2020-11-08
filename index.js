@@ -27,17 +27,15 @@ app.get('/', function (req, res) {
 });
 
 app.post('/callback', (req, res) => {
-  const {body} = req;
-  const {request} = body;
-  console.log(request);
-  const param = request.Body;
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const param = obj.Body;
+  const from = obj.From;
   let incomingUser;
-
-  incomingUser = User.exists({number: request.From}, function (err, doc) {
+  incomingUser = User.exists({number: from}, function (err, doc) {
     if (err) console.log(err);
     if (!doc) {
       let newUser = new User({
-        number: request.From,
+        number: from,
         university: 0,
         university_asked: 0,
         course: 0,
@@ -55,42 +53,45 @@ app.post('/callback', (req, res) => {
   const message = helper.sendMessage;
 
   if (new RegExp(stringData.join("|")).test((param.toLowerCase()))) {
-    message(helper.GREETINGS_RELIES[Math.floor(Math.random() * helper.GREETINGS_RELIES.length)], request.From);
+    message(helper.GREETINGS_RELIES[Math.floor(Math.random() * helper.GREETINGS_RELIES.length)], from);
   }
   setTimeout(function () {
-    findUser(request.From).then(dbUser => {
+    findUser(from).then(dbUser => {
       if (dbUser[0].course_asked === '0') {
         User.findByIdAndUpdate(dbUser,
           {course_asked: 1}, function (err, docs) {
             if (err) console.log(err);
           });
-        message(helper.QUESTIONS["first"], dbUser.number);
+        message(helper.QUESTIONS["first"], from);
       }
       if (dbUser[0].course_asked === '1' && dbUser[0].course === '0') {
         User.findByIdAndUpdate(dbUser,
           {course: param, university_asked: 1}, function (err, docs) {
             if (err) console.log(err);
           });
-        message(helper.QUESTIONS["second"], dbUser.number);
+        message(helper.QUESTIONS["second"], from);
       }
       if (dbUser[0].university_asked === '1' && dbUser[0].university === '0') {
         User.findByIdAndUpdate(dbUser,
           {university: param}, function (err, docs) {
             if (err) console.log(err);
-            message("Thank You.", dbUser.number);
-            message(helper.REPLIES['options'], dbUser.number);
+            message("Thank You.", from);
+            message(helper.REPLIES['options'], from);
           });
       }
+      if ((dbUser[0].course).length > 1 && (dbUser[0].university).length > 1) {
+        message("Thank You.", from);
+        message(helper.REPLIES['options'], from);
+      }
       if (param === "1") {
-        findUser(request.From).then(dbUser => {
+        findUser(from).then(dbUser => {
           let m = "University: "+ dbUser[0].university+ "\nCourse: "+ dbUser[0].course;
-          message(m, dbUser.number);
+          message(m, from);
         });
       }
     }).catch(error => console.error(error));
-  }, 3000)
-
-  return res.send({request});
+  }, 5000);
+  return res.send({obj});
 });
 
 app.listen(process.env.PORT)

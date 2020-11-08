@@ -10,7 +10,7 @@ exports.GREETINGS = [
 ];
 
 exports.GREETINGS_RELIES = [
-  "How are you! This is a Bot, Start by Answering these questions", "What's Up!, This is a Bot, Start by Answering these questions",
+  "How are you!", "What's Up!",
 ];
 
 exports.QUESTIONS = {
@@ -20,16 +20,14 @@ exports.QUESTIONS = {
 
 exports.REPLIES = {
   welcome: `Welcome to UoN 🙌`,
-  options: `WHAT WOULD YOU LIKE TO DO?
-     1. View Details ⚖
-     To make a selection, reply with the number ONLY of your option.
-     EXAMPLE: Reply with 1 to View Details ⚖`
+  options: "WHAT WOULD YOU LIKE TO DO? \n 1. View Details ⚖ \n To make a selection, reply with the number ONLY of your option. \nEXAMPLE: Reply with 1 to View Details ⚖"
 }
 
 exports.sendMessage = (body, to) => {
-  client.messages.create({
+  console.log("SENDING MESSAGE to " + to)
+  return client.messages.create({
     body: body,
-    to: 'whatsapp:' + to,
+    to: to,
     from: "whatsapp:" + process.env.TWILIO_NUMBER
   });
 }
