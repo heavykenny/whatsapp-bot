@@ -29,7 +29,6 @@ app.get('/', function (req, res) {
 app.post('/callback', (req, res) => {
   const {body} = req;
   const {request} = body;
-  return res.send({request});
   const param = request.Body;
   let incomingUser;
 
@@ -90,7 +89,7 @@ app.post('/callback', (req, res) => {
     }).catch(error => console.error(error));
   }, 3000)
 
-  return res.send({requestBody: 'empty'});
+  return res.send({request});
 });
 
 app.listen(process.env.PORT)
